@@ -1,17 +1,18 @@
-package main
+package sortingalgorithms
 
 import (
+	"github.com/ob-algdatii-ss19/leistungsnachweis-lallinger-stortz/visualization"
 	"time"
 )
 
 type Sorter interface {
-	start(output Visualizer)
+	Start(output visualization.Visualizer)
 }
 
 type Bubblesort struct {
 }
 
-func (*Bubblesort) start(output Visualizer) {
+func (*Bubblesort) Start(output visualization.Visualizer) {
 	values := output.GetSlice()
 	n := len(values)
 	swapped := true
@@ -23,7 +24,7 @@ func (*Bubblesort) start(output Visualizer) {
 			// if the current element is greater than the next
 			// element, swap them
 			if values[i-1] > values[i] {
-				time.Sleep(100 * time.Millisecond)
+				time.Sleep(10 * time.Millisecond)
 				output.SwitchPositions(i, i-1)
 				swapped = true
 			}

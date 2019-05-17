@@ -1,4 +1,4 @@
-package main
+package visualization
 
 import (
 	"fmt"
@@ -15,8 +15,9 @@ type Visualizer interface {
 }
 
 type ShellVisualizer struct {
-	values []int
-	s      tcell.Screen
+	values      []int
+	s           tcell.Screen
+	doubleWidth bool
 }
 
 var style = tcell.StyleDefault
@@ -25,28 +26,39 @@ var screen tcell.Screen
 var quit chan struct{}
 var clear map[string]func() //create a map for storing clear funcs
 
-const halfslab = '▄'
-
 func (me *ShellVisualizer) drawSlice() {
 
 	st := tcell.StyleDefault
-	const gl = ' '
+	sym := ' '
 	for x := 0; x < len(me.values); x++ {
 		val := me.values[x]
-		for y := 0; y < len(me.values); y++ {
-			difVal := len(me.values) - (val + 1)
-			if difVal == y {
-				st = st.Background(tcell.ColorGrey)
-				st = st.Foreground(tcell.ColorBlue)
-				me.s.SetCell(x, y, st, rune((val%26)+65))
+		useHalf := false
+		factor := 1
+		if me.doubleWidth {
+			if val%2 == 0 {
+				val = val / 2
+				factor = 2
 			} else {
-				if y > difVal {
-					st = st.Background(tcell.ColorWhite)
-				} else {
-					st = st.Background(tcell.ColorBlack)
-				}
-				me.s.SetCell(x, y, st, gl)
+				val = (val - 1) / 2
+				useHalf = true
+				factor = 2
 			}
+		}
+		difVal := len(me.values)/factor - val - 1
+		for y := 0; y < len(me.values)/factor; y++ {
+			if y > difVal {
+				st = st.Background(tcell.ColorWhite)
+				sym = ' '
+			} else if y == difVal && useHalf {
+				st = st.Background(tcell.ColorBlack)
+				st = st.Foreground(tcell.ColorWhite)
+				sym = '▄'
+			} else {
+				st = st.Background(tcell.ColorBlack)
+				sym = ' '
+			}
+
+			me.s.SetCell(x, y, st, sym)
 		}
 	}
 
@@ -73,15 +85,17 @@ func (me *ShellVisualizer) GetSlice() []int {
 	//go pollEvents(s)
 
 	me.s.Show()
-
+	var values []int
 	w, h := me.s.Size()
-	values := rand.Perm(int(math.Min(float64(w), float64(h))))
-	for i := range values {
-		values[i]++
+	if w >= 2*h {
+		me.doubleWidth = true
+		values = rand.Perm(2 * h)
+	} else {
+		me.doubleWidth = false
+		values = rand.Perm(int(math.Min(float64(w), float64(h))))
 	}
 
 	me.values = values
-
 	me.drawSlice()
 	return values
 }
