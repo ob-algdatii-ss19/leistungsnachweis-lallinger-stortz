@@ -10,7 +10,7 @@ import (
 )
 
 type Visualizer interface {
-	SwitchPositions(first int, second int)
+	SwitchPositions(first int, second int, green int)
 	GetSlice() []int
 }
 
@@ -18,6 +18,7 @@ type ShellVisualizer struct {
 	values      []int
 	s           tcell.Screen
 	doubleWidth bool
+	green       int
 }
 
 var style = tcell.StyleDefault
@@ -26,7 +27,14 @@ var screen tcell.Screen
 var quit chan struct{}
 var clear map[string]func() //create a map for storing clear funcs
 
-func (me *ShellVisualizer) drawSlice() {
+func (me *ShellVisualizer) drawSlice(indeces ...int) {
+
+	first := -1
+	second := -1
+	if len(indeces) == 2 {
+		first = indeces[0]
+		second = indeces[1]
+	}
 
 	st := tcell.StyleDefault
 	sym := ' '
@@ -47,11 +55,25 @@ func (me *ShellVisualizer) drawSlice() {
 		difVal := len(me.values)/factor - val - 1
 		for y := 0; y < len(me.values)/factor; y++ {
 			if y > difVal {
-				st = st.Background(tcell.ColorWhite)
+				if me.green == x {
+					st = st.Background(tcell.ColorGreen)
+				} else if first == x || second == x {
+					st = st.Background(tcell.ColorRed)
+				} else {
+					st = st.Background(tcell.ColorWhite)
+				}
+
 				sym = ' '
 			} else if y == difVal && useHalf {
 				st = st.Background(tcell.ColorBlack)
-				st = st.Foreground(tcell.ColorWhite)
+				if me.green == x {
+					st = st.Foreground(tcell.ColorGreen)
+				} else if first == x || second == x {
+					st = st.Foreground(tcell.ColorRed)
+				} else {
+					st = st.Foreground(tcell.ColorWhite)
+				}
+
 				sym = '▄'
 			} else {
 				st = st.Background(tcell.ColorBlack)
@@ -100,7 +122,8 @@ func (me *ShellVisualizer) GetSlice() []int {
 	return values
 }
 
-func (me *ShellVisualizer) SwitchPositions(first int, second int) {
+func (me *ShellVisualizer) SwitchPositions(first int, second int, green int) {
+	me.green = green
 	me.values[first], me.values[second] = me.values[second], me.values[first]
-	me.drawSlice()
+	me.drawSlice(first, second)
 }
