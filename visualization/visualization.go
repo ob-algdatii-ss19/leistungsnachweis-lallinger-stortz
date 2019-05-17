@@ -7,11 +7,14 @@ import (
 	"math"
 	"math/rand"
 	"os"
+	"time"
 )
 
 type Visualizer interface {
-	SwitchPositions(first int, second int, green int)
+	SwitchPositions(first int, second int, green int) bool
 	GetSlice() []int
+	Init(step bool, sleeptime time.Duration)
+	Clear()
 }
 
 type ShellVisualizer struct {
@@ -19,13 +22,67 @@ type ShellVisualizer struct {
 	s           tcell.Screen
 	doubleWidth bool
 	green       int
+	stepping    bool
+	sleeptime   time.Duration
+	stop        bool
+	doStep      bool
 }
 
 var style = tcell.StyleDefault
 
 var screen tcell.Screen
-var quit chan struct{}
 var clear map[string]func() //create a map for storing clear funcs
+
+func (me *ShellVisualizer) Clear() {
+	me.s.Clear()
+	me.s.Fini()
+}
+
+func (me *ShellVisualizer) Init(step bool, sleeptime time.Duration) {
+
+	me.stepping = step
+	me.sleeptime = sleeptime
+	me.stop = false
+
+	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
+	var e error
+	me.s, e = tcell.NewScreen()
+	if e != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", e)
+		os.Exit(1)
+	}
+	encoding.Register()
+
+	if e = me.s.Init(); e != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", e)
+		os.Exit(1)
+	}
+	st := tcell.StyleDefault
+	st.Background(tcell.ColorGray)
+	me.s.Fill(' ', st)
+	me.s.HideCursor()
+	me.s.DisableMouse()
+	me.s.Resize(200, 200, 200, 200)
+	me.s.Clear()
+	me.s.Show()
+	go func() {
+		for {
+			ev := me.s.PollEvent()
+			switch ev := ev.(type) {
+			case *tcell.EventKey:
+				if ev.Rune() == ' ' {
+					me.stepping = !me.stepping
+				}
+				if ev.Key() == tcell.KeyCtrlC {
+					me.stop = true
+				}
+			case *tcell.EventResize:
+				me.s.Sync()
+			}
+		}
+	}()
+
+}
 
 func (me *ShellVisualizer) drawSlice(indeces ...int) {
 
@@ -89,24 +146,6 @@ func (me *ShellVisualizer) drawSlice(indeces ...int) {
 }
 
 func (me *ShellVisualizer) GetSlice() []int {
-	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
-	var e error
-	me.s, e = tcell.NewScreen()
-	if e != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", e)
-		os.Exit(1)
-	}
-	encoding.Register()
-
-	if e = me.s.Init(); e != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", e)
-		os.Exit(1)
-	}
-
-	quit = make(chan struct{})
-	//go pollEvents(s)
-
-	me.s.Show()
 	var values []int
 	w, h := me.s.Size()
 	if w >= 2*h {
@@ -122,8 +161,18 @@ func (me *ShellVisualizer) GetSlice() []int {
 	return values
 }
 
-func (me *ShellVisualizer) SwitchPositions(first int, second int, green int) {
+func (me *ShellVisualizer) SwitchPositions(first int, second int, green int) bool {
 	me.green = green
 	me.values[first], me.values[second] = me.values[second], me.values[first]
 	me.drawSlice(first, second)
+
+	if me.stepping {
+		for me.stepping && !me.stop {
+			time.Sleep(10 * time.Millisecond)
+		}
+		me.stepping = true
+	} else {
+		time.Sleep(me.sleeptime)
+	}
+	return me.stop
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/ob-algdatii-ss19/leistungsnachweis-lallinger-stortz/sortingalgorithms"
 	"github.com/ob-algdatii-ss19/leistungsnachweis-lallinger-stortz/visualization"
+	"time"
 )
 
 func main() {
@@ -21,5 +22,7 @@ func main() {
 		sorter = &sortingalgorithms.Selectionsort{}
 	}
 
+	visual.Init(false, 100*time.Millisecond)
 	sorter.Start(visual)
+	visual.Clear()
 }

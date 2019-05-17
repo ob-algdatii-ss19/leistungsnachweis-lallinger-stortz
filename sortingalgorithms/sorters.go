@@ -2,10 +2,7 @@ package sortingalgorithms
 
 import (
 	"github.com/ob-algdatii-ss19/leistungsnachweis-lallinger-stortz/visualization"
-	"time"
 )
-
-var sleeptime = 100 * time.Millisecond
 
 type Sorter interface {
 	Start(output visualization.Visualizer)
@@ -33,8 +30,9 @@ func (*Bubblesort) Start(output visualization.Visualizer) {
 			// element, swap them
 			if values[i-1] > values[i] {
 
-				output.SwitchPositions(i, i-1, -1)
-				time.Sleep(sleeptime)
+				if output.SwitchPositions(i, i-1, -1) {
+					return
+				}
 				swapped = true
 			}
 		}
@@ -48,8 +46,9 @@ func (*Insertionsort) Start(output visualization.Visualizer) {
 		j := i
 		for j > 0 {
 			if values[j-1] > values[j] {
-				output.SwitchPositions(j, j-1, i)
-				time.Sleep(sleeptime)
+				if output.SwitchPositions(j, j-1, i) {
+					return
+				}
 			}
 			j = j - 1
 		}
@@ -66,7 +65,8 @@ func (*Selectionsort) Start(output visualization.Visualizer) {
 				minIdx = j
 			}
 		}
-		output.SwitchPositions(i, minIdx, i)
-		time.Sleep(sleeptime)
+		if output.SwitchPositions(i, minIdx, i) {
+			return
+		}
 	}
 }
