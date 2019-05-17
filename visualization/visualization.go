@@ -26,6 +26,7 @@ type ShellVisualizer struct {
 	sleeptime   time.Duration
 	stop        bool
 	doStep      bool
+	keyPress    bool
 }
 
 var style = tcell.StyleDefault
@@ -43,6 +44,8 @@ func (me *ShellVisualizer) Init(step bool, sleeptime time.Duration) {
 	me.stepping = step
 	me.sleeptime = sleeptime
 	me.stop = false
+	me.doStep = true
+	me.keyPress = false
 
 	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
 	var e error
@@ -71,9 +74,15 @@ func (me *ShellVisualizer) Init(step bool, sleeptime time.Duration) {
 			switch ev := ev.(type) {
 			case *tcell.EventKey:
 				if ev.Rune() == ' ' {
-					me.stepping = !me.stepping
+					me.stepping = true
+					me.doStep = !me.doStep
+				}
+				if ev.Rune() == 'c' {
+					me.keyPress = true
+					me.stepping = false
 				}
 				if ev.Key() == tcell.KeyCtrlC {
+					me.keyPress = true
 					me.stop = true
 				}
 			case *tcell.EventResize:
@@ -167,10 +176,11 @@ func (me *ShellVisualizer) SwitchPositions(first int, second int, green int) boo
 	me.drawSlice(first, second)
 
 	if me.stepping {
-		for me.stepping && !me.stop {
+		for !me.doStep && !me.keyPress {
 			time.Sleep(10 * time.Millisecond)
 		}
-		me.stepping = true
+		me.keyPress = false
+		me.doStep = false
 	} else {
 		time.Sleep(me.sleeptime)
 	}
