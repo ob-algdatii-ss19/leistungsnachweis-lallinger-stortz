@@ -1,6 +1,14 @@
 pipeline {
     agent none
     stages {
+        stage('Build') {
+            agent {
+                docker { image 'obraun/vss-protoactor-jenkins' }
+            }
+            steps {
+                sh 'go build main.go'
+            }
+        }
         stage('Test') {
             agent {
                 docker { image 'obraun/vss-jenkins' }
@@ -23,6 +31,7 @@ pipeline {
                 label 'master'
             }
             steps {
+                sh "docker-build-and-push -b ${BRANCH_NAME} -s sortvisualization -f sortvisualization.dockerfile"
                 sh "docker-build-and-push -b ${BRANCH_NAME}"
             }
         }
