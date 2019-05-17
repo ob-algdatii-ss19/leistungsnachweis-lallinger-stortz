@@ -23,6 +23,7 @@ pipeline {
                 docker { image 'obraun/vss-jenkins' }
             }   
             steps {
+                sh 'echo no lint'
                 //sh 'golangci-lint run --enable-all'
             }
         }
