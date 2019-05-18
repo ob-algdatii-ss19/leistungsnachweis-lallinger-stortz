@@ -1,106 +1,69 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"math/rand"
-	"os"
+	"github.com/ob-algdatii-ss19/leistungsnachweis-lallinger-stortz/sortingalgorithms"
+	"github.com/ob-algdatii-ss19/leistungsnachweis-lallinger-stortz/visualization"
 	"time"
-
-	//"github.com/fatih/color"
-	"github.com/gdamore/tcell"
-	"github.com/gdamore/tcell/encoding"
 )
 
-var style = tcell.StyleDefault
-
-var screen tcell.Screen
-var quit chan struct{}
-var clear map[string]func() //create a map for storing clear funcs
-
-const halfslab = '▄'
+var (
+	sleepTime = flag.Int("sleep", 100, "Time to wait between steps while automatic stepping in miliseconds")
+	stepping  = flag.Bool("step", false, "Activate manual stepping")
+)
 
 func main() {
-	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
-	s, e := tcell.NewScreen()
-	if e != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", e)
-		os.Exit(1)
+
+	origUsage := flag.Usage
+	flag.Usage = func() {
+		fmt.Println("This program visualizes sorting algorithms. You can choose a sorting algorithm and stepping mode (manual or automatic).")
+		fmt.Println("While automatic stepping is on you can press space to switch into manual stepping mode.")
+		fmt.Println("When in manual stepping mode you can step with space or go back to automatic stepping by pressing 'c'.")
+		fmt.Println("To exit the program press ctrl+c at any moment.")
+		fmt.Println("Resizing the terminal after starting is not possible. Please set you desired window size before starting")
+		fmt.Println("leistungsnachweis-lalllinger-stortz [FLAGS] SORTER")
+		fmt.Println("FLAGS")
+		origUsage()
+		fmt.Println()
+		fmt.Println("SORTER")
+		fmt.Println("  bubble")
+		fmt.Println("	Sort values using bubblesort")
+		fmt.Println("  insertion")
+		fmt.Println("	Sort values using insertionsort")
+		fmt.Println("  selection")
+		fmt.Println("	Sort values using selection")
+		fmt.Println("  bogo")
+		fmt.Println("	Sort values using bogosort. Caution this probably won't terminate by itself!")
+		fmt.Println("")
+		fmt.Println("Example:")
+		fmt.Println("  leistungsnachweis-lalllinger-stortz --sleep=50 --step=false selection")
 	}
-	encoding.Register()
 
-	if e = s.Init(); e != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", e)
-		os.Exit(1)
-	}
+	flag.Parse()
 
-	quit = make(chan struct{})
-	//go pollEvents(s)
-
-	s.Show()
-
-	go func() {
-		for {
-			drawScreen(s)
-			time.Sleep(time.Millisecond * 10000)
-		}
-
-	}()
-
-	<-quit
-	s.Fini()
-}
-
-func drawScreen(s tcell.Screen) {
-
-	w, h := s.Size()
-
-	if w == 0 || h == 0 {
+	if len(flag.Args()) != 1 {
+		fmt.Println("Invalid number of arguments!")
+		flag.Usage()
 		return
 	}
 
-	list := rand.Perm(h)
-	for i, _ := range list {
-		list[i]++
-	}
-	sel1 := rand.Intn(h) + 1
-	sel2 := rand.Intn(h) + 1
-	st := tcell.StyleDefault
-	const gl = ' '
-	for x := 0; x < h; x++ {
-		val := list[x]
-		for y := 0; y < h; y++ {
-			/*if y < val{
-				st = st.Background(tcell.ColorGrey)
-				st = st.Foreground(tcell.ColorBlue)
-				s.SetCell(x, y, st, rune((y % 26)+65))
-			}else{
-				st = st.Background(tcell.ColorBlack)
-				s.SetCell(x, y, st, gl)
-			}*/
-			difVal := h - (val + 1)
-			if difVal == y {
-				st = st.Background(tcell.ColorGrey)
-				st = st.Foreground(tcell.ColorBlue)
-				s.SetCell(x, y, st, rune((val%26)+65))
+	var sorter sortingalgorithms.Sorter
+	var visual visualization.Visualizer
+	visual = &visualization.ShellVisualizer{}
 
-			} else {
-				if y > difVal {
-					if difVal == sel1 {
-						st = st.Background(tcell.ColorRed)
-					} else if difVal == sel2 {
-						st = st.Background(tcell.ColorGreen)
-					} else {
-						st = st.Background(tcell.ColorWhite)
-					}
-				} else {
-					st = st.Background(tcell.ColorBlack)
-				}
-
-				s.SetCell(x, y, st, gl)
-			}
-
-		}
+	switch flag.Args()[0] {
+	case "bubble":
+		sorter = &sortingalgorithms.Bubblesort{}
+	case "insertion":
+		sorter = &sortingalgorithms.Insertionsort{}
+	case "selection":
+		sorter = &sortingalgorithms.Selectionsort{}
+	case "bogo":
+		sorter = &sortingalgorithms.Bogosort{}
 	}
 
-	s.Show()
+	visual.Init(*stepping, time.Duration(*sleepTime)*time.Millisecond)
+	sorter.Start(visual)
+	visual.Clear()
 }
