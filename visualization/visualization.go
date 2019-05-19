@@ -44,7 +44,6 @@ func (me *ShellVisualizer) Clear() {
 }
 
 func (me *ShellVisualizer) Init(step bool, sleeptime time.Duration) {
-
 	me.stepping = step
 	me.sleeptime = sleeptime
 	me.stop = false
@@ -186,6 +185,14 @@ func (me *ShellVisualizer) SwitchPositions(first int, second int, green int) boo
 		me.green = green
 	}
 
+	if first == second {
+		green = -1
+	}
+
+	if !me.Test {
+		me.drawSlice(first, second)
+	}
+
 	if me.stepping {
 		for !me.doStep && !me.keyPress {
 			time.Sleep(10 * time.Millisecond)
@@ -196,8 +203,5 @@ func (me *ShellVisualizer) SwitchPositions(first int, second int, green int) boo
 		time.Sleep(me.sleeptime)
 	}
 	me.Values[first], me.Values[second] = me.Values[second], me.Values[first]
-	if !me.Test {
-		me.drawSlice(first, second)
-	}
 	return me.stop
 }

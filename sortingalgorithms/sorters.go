@@ -25,6 +25,12 @@ type Bogosort struct {
 	values []int
 }
 
+type Quicksort struct {
+	values  []int
+	indeces map[int]int
+	out     visualization.Visualizer
+}
+
 func (me *Bubblesort) Start(output visualization.Visualizer) {
 	values := me.values
 	if len(me.values) == 0 {
@@ -114,3 +120,65 @@ func (me *Bogosort) Start(output visualization.Visualizer) {
 	}
 }
 
+func (me *Quicksort) Start(output visualization.Visualizer) {
+	values := me.values
+	if len(me.values) == 0 {
+		values = output.GetSlice()
+		me.values = values
+	}
+
+	me.out = output
+	me.indeces = make(map[int]int)
+
+	for k, v := range me.values {
+		me.indeces[v] = k
+	}
+	me.quicksort(values)
+
+}
+
+func (me *Quicksort) quicksort(a []int) bool {
+
+	stop := false
+	if len(a) < 2 {
+		return stop
+	}
+
+	left, right := 0, len(a)-1
+
+	pivot := rand.Int() % len(a)
+
+	if me.indeces[a[pivot]] != me.indeces[a[right]] {
+		stop = me.out.SwitchPositions(me.indeces[a[pivot]], me.indeces[a[right]], -1)
+		if stop {
+			return stop
+		}
+		me.indeces[a[pivot]], me.indeces[a[right]] = me.indeces[a[right]], me.indeces[a[pivot]]
+	}
+
+	for i, _ := range a {
+		if a[i] < a[right] {
+			if me.indeces[a[left]] != me.indeces[a[i]] {
+				stop = me.out.SwitchPositions(me.indeces[a[left]], me.indeces[a[i]], -1)
+			}
+			if stop {
+				return stop
+			}
+			me.indeces[a[left]], me.indeces[a[i]] = me.indeces[a[i]], me.indeces[a[left]]
+			left++
+		}
+	}
+
+	if me.indeces[a[left]] != me.indeces[a[right]] {
+		stop = me.out.SwitchPositions(me.indeces[a[left]], me.indeces[a[right]], -1)
+		me.indeces[a[left]], me.indeces[a[right]] = me.indeces[a[right]], me.indeces[a[left]]
+	}
+
+	stop = me.quicksort(a[:left])
+	if stop {
+		return stop
+	}
+	stop = me.quicksort(a[left+1:])
+
+	return stop
+}

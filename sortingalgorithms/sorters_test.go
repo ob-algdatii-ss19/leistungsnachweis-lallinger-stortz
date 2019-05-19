@@ -78,6 +78,23 @@ func TestBogo(t *testing.T) {
 	visual.Clear()
 }
 
+func TestQuick(t *testing.T) {
+	rand.Seed(time.Now().UnixNano())
+	values := rand.Perm(4)
+	cp := make([]int, 4)
+	copy(cp, values)
+
+	visual := &visualization.ShellVisualizer{Values: values, Test: true}
+	visual.Init(false, 0*time.Millisecond)
+	sorter := &Quicksort{values: values}
+	sorter.Start(visual)
+	sort.Ints(cp)
+	if !isIdentical(cp, sorter.values) {
+		t.Error("Bubblesort arrays are not identical")
+	}
+	visual.Clear()
+}
+
 func isIdentical(first []int, second []int) bool {
 	for i := 0; i < len(first); i++ {
 		if first[i] != second[i] {
