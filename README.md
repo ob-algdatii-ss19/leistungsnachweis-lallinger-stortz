@@ -49,3 +49,23 @@ SORTER
 Example:
   leistungsnachweis-lalllinger-stortz --sleep=50 --step=false selection
 ```
+
+## Korrekte Darstellung in Powershell
+
+Um bei Seitenverhältnissen größer 2:1 eine korrekte Darstellung der Werte zu erreichen, werden Unicode-Blockelemente verwendet die nicht von den standardmäßig installierten Schriftarten in Powershell unterstützt werden.
+
+Es muss also eine passende TrueType-Schriftart installiert werden. Es eignet sich als Beispiel die Schriftart DejaVu Sans Mono. (https://dejavu-fonts.github.io/Download.html)
+Unter Windows 10 kann eine Schriftart, die im ttf-Format vorliegt, über das Kontextmenü im Explorer installiert werden (Rechtsklick -> Installieren).
+
+Um auch in der Powershell verwendet werden zu können, muss außerdem ein Registry Wert gesetzt werden.
+    -Starten des Registry-Editors mit regedit.exe
+    -Navigation zu: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Console\TrueTypeFont
+    -Anlegen einer neuen Zeichenfolge mit dem Namen 000 (Rechtsklick -> Neu -> Zeichenfolge)
+        -Für weitere Schriftarten jeweils die Anzahl der 0en um eins erhöhen
+    -Ändern des Wertes der Zeichenfolge auf den exakten Namen der Schrift (z.B. "DejaVu Sans Mono")
+
+Für die Verwendung ist nun ein Neustart von Windows erforderlich.
+
+Zuletzt muss nun die aktuelle Powershell Schriftart geändert werden.
+    -Starten eines Powershell Terminals
+    -Rechtsklick auf die obere Leiste des Terminals -> Eigenschaften -> Schriftart auswählen
