@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+
 var (
 	sleepTime = flag.Int("sleep", 100, "Time to wait between steps while automatic stepping in miliseconds")
 	stepping  = flag.Bool("step", false, "Activate manual stepping")

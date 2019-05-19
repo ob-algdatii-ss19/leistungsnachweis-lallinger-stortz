@@ -113,3 +113,4 @@ func (me *Bogosort) Start(output visualization.Visualizer) {
 		}
 	}
 }
+
