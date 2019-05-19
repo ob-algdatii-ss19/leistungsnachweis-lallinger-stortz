@@ -58,6 +58,7 @@ Es muss also eine passende TrueType-Schriftart installiert werden. Es eignet sic
 Unter Windows 10 kann eine Schriftart, die im ttf-Format vorliegt, über das Kontextmenü im Explorer installiert werden (Rechtsklick -> Installieren).
 
 Um auch in der Powershell verwendet werden zu können, muss außerdem ein Registry Wert gesetzt werden.
+
     -Starten des Registry-Editors mit regedit.exe
     -Navigation zu: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Console\TrueTypeFont
     -Anlegen einer neuen Zeichenfolge mit dem Namen 000 (Rechtsklick -> Neu -> Zeichenfolge)
@@ -67,5 +68,6 @@ Um auch in der Powershell verwendet werden zu können, muss außerdem ein Regist
 Für die Verwendung ist nun ein Neustart von Windows erforderlich.
 
 Zuletzt muss nun die aktuelle Powershell Schriftart geändert werden.
+
     -Starten eines Powershell Terminals
     -Rechtsklick auf die obere Leiste des Terminals -> Eigenschaften -> Schriftart auswählen
