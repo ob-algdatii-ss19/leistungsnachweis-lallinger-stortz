@@ -65,7 +65,7 @@ Um auch in der PowerShell verwendet werden zu können, muss außerdem ein Regist
         -Für weitere Schriftarten jeweils die Anzahl der 0en um eins erhöhen
     -Ändern des Wertes der Zeichenfolge auf den exakten Namen der Schrift (z.B. "DejaVu Sans Mono")
 
-Für die Verwendung ist nun ein Neustart von Windows erforderlich.
+Für die Verwendung ist noch ein Neustart von Windows erforderlich.
 
 Zuletzt muss nun die aktuelle PowerShell Schriftart geändert werden.
 
