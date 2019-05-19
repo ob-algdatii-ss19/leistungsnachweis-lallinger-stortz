@@ -42,7 +42,9 @@ SORTER
   insertion
         Sort values using insertionsort
   selection
-        Sort values using selection
+        Sort values using selectionsort
+  quick
+        Sort values using quicksort
   bogo
         Sort values using bogosort. Caution this probably won't terminate by itself!
 
