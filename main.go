@@ -8,7 +8,6 @@ import (
 	"time"
 )
 
-
 var (
 	sleepTime = flag.Int("sleep", 100, "Time to wait between steps while automatic stepping in miliseconds")
 	stepping  = flag.Bool("step", false, "Activate manual stepping")
@@ -62,6 +61,8 @@ func main() {
 		sorter = &sortingalgorithms.Selectionsort{}
 	case "bogo":
 		sorter = &sortingalgorithms.Bogosort{}
+	case "quick":
+		sorter = &sortingalgorithms.Quicksort{}
 	}
 
 	visual.Init(*stepping, time.Duration(*sleepTime)*time.Millisecond)
