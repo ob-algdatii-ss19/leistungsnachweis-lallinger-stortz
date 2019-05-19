@@ -14,8 +14,8 @@ pipeline {
                 docker { image 'obraun/vss-jenkins' }
             }
             steps {
+                sh 'cd sortingalgorithms'
                 sh 'echo go test -v'
-                sh 'echo go test -bench=.'
             }
         }
         stage('Lint') {
