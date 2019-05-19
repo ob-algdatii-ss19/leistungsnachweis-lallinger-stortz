@@ -57,7 +57,7 @@ Um bei Seitenverhältnissen größer 2:1 eine korrekte Darstellung der Werte zu 
 Es muss also eine passende TrueType-Schriftart installiert werden. Es eignet sich als Beispiel die Schriftart DejaVu Sans Mono. (https://dejavu-fonts.github.io/Download.html)
 Unter Windows 10 kann eine Schriftart, die im ttf-Format vorliegt, über das Kontextmenü im Explorer installiert werden (Rechtsklick -> Installieren).
 
-Um auch in der Powershell verwendet werden zu können, muss außerdem ein Registry Wert gesetzt werden.
+Um auch in der PowerShell verwendet werden zu können, muss außerdem ein Registry Wert gesetzt werden.
 
     -Starten des Registry-Editors mit regedit.exe
     -Navigation zu: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Console\TrueTypeFont
@@ -67,7 +67,7 @@ Um auch in der Powershell verwendet werden zu können, muss außerdem ein Regist
 
 Für die Verwendung ist nun ein Neustart von Windows erforderlich.
 
-Zuletzt muss nun die aktuelle Powershell Schriftart geändert werden.
+Zuletzt muss nun die aktuelle PowerShell Schriftart geändert werden.
 
-    -Starten eines Powershell Terminals
+    -Starten eines PowerShell Terminals
     -Rechtsklick auf die obere Leiste des Terminals -> Eigenschaften -> Schriftart auswählen
