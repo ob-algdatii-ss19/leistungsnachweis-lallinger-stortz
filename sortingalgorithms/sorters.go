@@ -2,6 +2,7 @@ package sortingalgorithms
 
 import (
 	"github.com/ob-algdatii-ss19/leistungsnachweis-lallinger-stortz/visualization"
+	"math/rand"
 )
 
 type Sorter interface {
@@ -9,16 +10,27 @@ type Sorter interface {
 }
 
 type Bubblesort struct {
+	values []int
 }
 
 type Insertionsort struct {
+	values []int
 }
 
 type Selectionsort struct {
+	values []int
 }
 
-func (*Bubblesort) Start(output visualization.Visualizer) {
-	values := output.GetSlice()
+type Bogosort struct {
+	values []int
+}
+
+func (me *Bubblesort) Start(output visualization.Visualizer) {
+	values := me.values
+	if len(me.values) == 0 {
+		values = output.GetSlice()
+		me.values = values
+	}
 	n := len(values)
 	swapped := true
 	for swapped {
@@ -39,8 +51,12 @@ func (*Bubblesort) Start(output visualization.Visualizer) {
 	}
 }
 
-func (*Insertionsort) Start(output visualization.Visualizer) {
-	values := output.GetSlice()
+func (me *Insertionsort) Start(output visualization.Visualizer) {
+	values := me.values
+	if len(me.values) == 0 {
+		values = output.GetSlice()
+		me.values = values
+	}
 	var n = len(values)
 	for i := 1; i < n; i++ {
 		j := i
@@ -55,8 +71,12 @@ func (*Insertionsort) Start(output visualization.Visualizer) {
 	}
 }
 
-func (*Selectionsort) Start(output visualization.Visualizer) {
-	values := output.GetSlice()
+func (me *Selectionsort) Start(output visualization.Visualizer) {
+	values := me.values
+	if len(me.values) == 0 {
+		values = output.GetSlice()
+		me.values = values
+	}
 	var n = len(values)
 	for i := 0; i < n; i++ {
 		var minIdx = i
@@ -70,3 +90,27 @@ func (*Selectionsort) Start(output visualization.Visualizer) {
 		}
 	}
 }
+
+func (me *Bogosort) Start(output visualization.Visualizer) {
+	values := me.values
+	if len(me.values) == 0 {
+		values = output.GetSlice()
+		me.values = values
+	}
+
+	for {
+		if output.SwitchPositions(rand.Intn(len(values)), rand.Intn(len(values)), -1) {
+			return
+		}
+
+		for i := 0; i < len(values); i++ {
+			if i+1 == len(values) {
+				return
+			}
+			if values[i] > values[i+1] {
+				break
+			}
+		}
+	}
+}
+
