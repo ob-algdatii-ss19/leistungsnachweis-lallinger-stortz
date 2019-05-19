@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gdamore/tcell"
 	"github.com/gdamore/tcell/encoding"
-	"math"
 	"math/rand"
 	"os"
 	"time"
@@ -18,17 +17,21 @@ type Visualizer interface {
 }
 
 type ShellVisualizer struct {
-	Values      []int
-	s           tcell.Screen
-	doubleWidth bool
-	green       int
-	stepping    bool
-	sleeptime   time.Duration
-	stop        bool
-	doStep      bool
-	keyPress    bool
-	Test        bool
+	Values    []int
+	s         tcell.Screen
+	green     int
+	stepping  bool
+	sleeptime time.Duration
+	stop      bool
+	doStep    bool
+	keyPress  bool
+	Test      bool
+	ratio     int
+	heigth    int
 }
+
+const quarter = '▂'
+const threequarters = '▆'
 
 var style = tcell.StyleDefault
 
@@ -108,20 +111,17 @@ func (me *ShellVisualizer) drawSlice(indeces ...int) {
 	sym := ' '
 	for x := 0; x < len(me.Values); x++ {
 		val := me.Values[x]
-		useHalf := false
-		factor := 1
-		if me.doubleWidth {
-			if val%2 == 0 {
-				val = val / 2
-				factor = 2
-			} else {
-				val = (val - 1) / 2
-				useHalf = true
-				factor = 2
-			}
+		remainder := val % me.ratio
+
+		if remainder == 0 {
+			val = val / me.ratio
+		} else {
+			val = (val - remainder) / me.ratio
 		}
-		difVal := len(me.Values)/factor - val - 1
-		for y := 0; y < len(me.Values)/factor; y++ {
+
+		difVal := me.heigth - val - 1
+		//for y := 0; y < len(me.Values)/me.ratio; y++ {
+		for y := 0; y < me.heigth; y++ {
 			if y > difVal {
 				if me.green == x {
 					st = st.Background(tcell.ColorGreen)
@@ -132,7 +132,7 @@ func (me *ShellVisualizer) drawSlice(indeces ...int) {
 				}
 
 				sym = ' '
-			} else if y == difVal && useHalf {
+			} else if y == difVal && remainder != 0 {
 				st = st.Background(tcell.ColorBlack)
 				if me.green == x {
 					st = st.Foreground(tcell.ColorGreen)
@@ -143,6 +143,13 @@ func (me *ShellVisualizer) drawSlice(indeces ...int) {
 				}
 
 				sym = '▄'
+				if me.ratio == 4 {
+					if remainder == 1 {
+						sym = quarter
+					} else if remainder == 3 {
+						sym = threequarters
+					}
+				}
 			} else {
 				st = st.Background(tcell.ColorBlack)
 				sym = ' '
@@ -159,14 +166,15 @@ func (me *ShellVisualizer) drawSlice(indeces ...int) {
 func (me *ShellVisualizer) GetSlice() []int {
 	var values []int
 	w, h := me.s.Size()
+	me.heigth = h
 	rand.Seed(time.Now().UnixNano())
+	me.ratio = 1
 	if w >= 2*h {
-		me.doubleWidth = true
-		values = rand.Perm(2 * h)
-	} else {
-		me.doubleWidth = false
-		values = rand.Perm(int(math.Min(float64(w), float64(h))))
+		me.ratio = 4
+	} else if w >= h {
+		me.ratio = 2
 	}
+	values = rand.Perm(w)
 
 	me.Values = values
 	me.drawSlice()

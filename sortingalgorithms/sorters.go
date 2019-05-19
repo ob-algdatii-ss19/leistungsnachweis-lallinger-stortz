@@ -28,7 +28,7 @@ type Bogosort struct {
 func (me *Bubblesort) Start(output visualization.Visualizer) {
 	values := me.values
 	if len(me.values) == 0 {
-		values := output.GetSlice()
+		values = output.GetSlice()
 		me.values = values
 	}
 	n := len(values)
@@ -54,7 +54,7 @@ func (me *Bubblesort) Start(output visualization.Visualizer) {
 func (me *Insertionsort) Start(output visualization.Visualizer) {
 	values := me.values
 	if len(me.values) == 0 {
-		values := output.GetSlice()
+		values = output.GetSlice()
 		me.values = values
 	}
 	var n = len(values)
@@ -74,7 +74,7 @@ func (me *Insertionsort) Start(output visualization.Visualizer) {
 func (me *Selectionsort) Start(output visualization.Visualizer) {
 	values := me.values
 	if len(me.values) == 0 {
-		values := output.GetSlice()
+		values = output.GetSlice()
 		me.values = values
 	}
 	var n = len(values)
@@ -94,7 +94,7 @@ func (me *Selectionsort) Start(output visualization.Visualizer) {
 func (me *Bogosort) Start(output visualization.Visualizer) {
 	values := me.values
 	if len(me.values) == 0 {
-		values := output.GetSlice()
+		values = output.GetSlice()
 		me.values = values
 	}
 
