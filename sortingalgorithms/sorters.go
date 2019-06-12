@@ -32,11 +32,8 @@ type Quicksort struct {
 }
 
 func (me *Bubblesort) Start(output visualization.Visualizer) {
-	values := me.values
-	if len(me.values) == 0 {
-		values = output.GetSlice()
-		me.values = values
-	}
+	values := output.GetSlice()
+	me.values = values
 	n := len(values)
 	swapped := true
 	for swapped {
@@ -58,11 +55,8 @@ func (me *Bubblesort) Start(output visualization.Visualizer) {
 }
 
 func (me *Insertionsort) Start(output visualization.Visualizer) {
-	values := me.values
-	if len(me.values) == 0 {
-		values = output.GetSlice()
-		me.values = values
-	}
+	values := output.GetSlice()
+	me.values = values
 	var n = len(values)
 	for i := 1; i < n; i++ {
 		j := i
@@ -78,11 +72,8 @@ func (me *Insertionsort) Start(output visualization.Visualizer) {
 }
 
 func (me *Selectionsort) Start(output visualization.Visualizer) {
-	values := me.values
-	if len(me.values) == 0 {
-		values = output.GetSlice()
-		me.values = values
-	}
+	values := output.GetSlice()
+	me.values = values
 	var n = len(values)
 	for i := 0; i < n; i++ {
 		var minIdx = i
@@ -98,11 +89,8 @@ func (me *Selectionsort) Start(output visualization.Visualizer) {
 }
 
 func (me *Bogosort) Start(output visualization.Visualizer) {
-	values := me.values
-	if len(me.values) == 0 {
-		values = output.GetSlice()
-		me.values = values
-	}
+	values := output.GetSlice()
+	me.values = values
 
 	for {
 		if output.SwitchPositions(rand.Intn(len(values)), rand.Intn(len(values)), -1) {
@@ -121,11 +109,8 @@ func (me *Bogosort) Start(output visualization.Visualizer) {
 }
 
 func (me *Quicksort) Start(output visualization.Visualizer) {
-	values := me.values
-	if len(me.values) == 0 {
-		values = output.GetSlice()
-		me.values = values
-	}
+	values := output.GetSlice()
+	me.values = values
 
 	me.out = output
 	me.indeces = make(map[int]int)
