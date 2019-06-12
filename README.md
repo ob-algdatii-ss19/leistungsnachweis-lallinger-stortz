@@ -2,7 +2,7 @@
 
 ## Was macht dieses Tool?
 Mit Hilfe dieses Tools können Sortieralgorithmen auf Konsolenebene visualisiert werden.
-Zur Visualisierung wird hierfür tcell[github.com/gdamore/tcell] genutzt.
+Zur Visualisierung wird hierfür [tcell](github.com/gdamore/tcell) genutzt.
 
 ## Getting started
 
