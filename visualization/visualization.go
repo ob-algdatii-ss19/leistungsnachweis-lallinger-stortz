@@ -17,7 +17,7 @@ type Visualizer interface {
 }
 
 type ShellVisualizer struct {
-	Values    []int
+	values    []int
 	s         tcell.Screen
 	green     int
 	stepping  bool
@@ -25,7 +25,7 @@ type ShellVisualizer struct {
 	stop      bool
 	doStep    bool
 	keyPress  bool
-	Test      bool
+	Test      int
 	ratio     int
 	heigth    int
 }
@@ -108,8 +108,8 @@ func (me *ShellVisualizer) drawSlice(indeces ...int) {
 
 	st := tcell.StyleDefault
 	sym := ' '
-	for x := 0; x < len(me.Values); x++ {
-		val := me.Values[x]
+	for x := 0; x < len(me.values); x++ {
+		val := me.values[x]
 		remainder := val % me.ratio
 
 		if remainder == 0 {
@@ -168,6 +168,9 @@ func (me *ShellVisualizer) GetSlice() []int {
 	me.heigth = h
 	rand.Seed(time.Now().UnixNano())
 	me.ratio = 1
+	if me.Test > 0 {
+		w = me.Test
+	}
 	if w >= 2*h {
 		me.ratio = 4
 	} else if w >= h {
@@ -175,8 +178,11 @@ func (me *ShellVisualizer) GetSlice() []int {
 	}
 	values = rand.Perm(w)
 
-	me.Values = values
-	me.drawSlice()
+	me.values = values
+	if me.Test == 0 {
+		me.drawSlice()
+	}
+
 	return values
 }
 
@@ -189,7 +195,7 @@ func (me *ShellVisualizer) SwitchPositions(first int, second int, green int) boo
 		green = -1
 	}
 
-	if !me.Test {
+	if me.Test == 0 {
 		me.drawSlice(first, second)
 	}
 
@@ -202,6 +208,6 @@ func (me *ShellVisualizer) SwitchPositions(first int, second int, green int) boo
 	} else {
 		time.Sleep(me.sleeptime)
 	}
-	me.Values[first], me.Values[second] = me.Values[second], me.Values[first]
+	me.values[first], me.values[second] = me.values[second], me.values[first]
 	return me.stop
 }

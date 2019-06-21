@@ -2,8 +2,6 @@ package sortingalgorithms
 
 import (
 	"github.com/ob-algdatii-ss19/leistungsnachweis-lallinger-stortz/visualization"
-	"math/rand"
-	"sort"
 	"testing"
 	"time"
 )
@@ -11,95 +9,66 @@ import (
 const n = 100
 
 func TestBubble(t *testing.T) {
-	rand.Seed(time.Now().UnixNano())
-	values := rand.Perm(n)
-	cp := make([]int, n)
-	copy(cp, values)
-
-	visual := &visualization.ShellVisualizer{Values: values, Test: true}
+	visual := &visualization.ShellVisualizer{Test: n}
 	visual.Init(false, 0*time.Millisecond)
-	sorter := &Bubblesort{values: values}
+	sorter := &Bubblesort{}
 	sorter.Start(visual)
-	sort.Ints(cp)
-	if !isIdentical(cp, sorter.values) {
-		t.Error("Bubblesort arrays are not identical")
+	for k, v := range sorter.values {
+		if k > 0 && v < sorter.values[k-1] {
+			t.Error("Bubblesort array is not sorted")
+		}
 	}
 	visual.Clear()
 }
 
 func TestInsertion(t *testing.T) {
-	rand.Seed(time.Now().UnixNano())
-	values := rand.Perm(n)
-	cp := make([]int, n)
-	copy(cp, values)
-
-	visual := &visualization.ShellVisualizer{Values: values, Test: true}
+	visual := &visualization.ShellVisualizer{Test: n}
 	visual.Init(false, 0*time.Millisecond)
-	sorter := &Insertionsort{values: values}
+	sorter := &Insertionsort{}
 	sorter.Start(visual)
-	sort.Ints(cp)
-	if !isIdentical(cp, sorter.values) {
-		t.Error("Insertionsort arrays are not identical")
+	for k, v := range sorter.values {
+		if k > 0 && v < sorter.values[k-1] {
+			t.Error("Insertionsort array is not sorted")
+		}
 	}
 	visual.Clear()
 }
 
 func TestSelection(t *testing.T) {
-	rand.Seed(time.Now().UnixNano())
-	values := rand.Perm(n)
-	cp := make([]int, n)
-	copy(cp, values)
-
-	visual := &visualization.ShellVisualizer{Values: values, Test: true}
+	visual := &visualization.ShellVisualizer{Test: n}
 	visual.Init(false, 0*time.Millisecond)
-	sorter := &Selectionsort{values: values}
+	sorter := &Selectionsort{}
 	sorter.Start(visual)
-	sort.Ints(cp)
-	if !isIdentical(cp, sorter.values) {
-		t.Error("Selectionsort arrays are not identical")
+	for k, v := range sorter.values {
+		if k > 0 && v < sorter.values[k-1] {
+			t.Error("Selectionsort array is not sorted")
+		}
 	}
 	visual.Clear()
 }
 
 func TestBogo(t *testing.T) {
-	rand.Seed(time.Now().UnixNano())
-	values := rand.Perm(4)
-	cp := make([]int, 4)
-	copy(cp, values)
-
-	visual := &visualization.ShellVisualizer{Values: values, Test: true}
+	visual := &visualization.ShellVisualizer{Test: 4}
 	visual.Init(false, 0*time.Millisecond)
-	sorter := &Bogosort{values: values}
+	sorter := &Bogosort{}
 	sorter.Start(visual)
-	sort.Ints(cp)
-	if !isIdentical(cp, sorter.values) {
-		t.Error("Bubblesort arrays are not identical")
+	for k, v := range sorter.values {
+		if k > 0 && v < sorter.values[k-1] {
+			t.Error("Bogosort array is not sorted")
+		}
 	}
 	visual.Clear()
 }
 
 func TestQuick(t *testing.T) {
-	rand.Seed(time.Now().UnixNano())
-	values := rand.Perm(4)
-	cp := make([]int, 4)
-	copy(cp, values)
-
-	visual := &visualization.ShellVisualizer{Values: values, Test: true}
+	visual := &visualization.ShellVisualizer{Test: n}
 	visual.Init(false, 0*time.Millisecond)
-	sorter := &Quicksort{values: values}
+	sorter := &Quicksort{}
 	sorter.Start(visual)
-	sort.Ints(cp)
-	if !isIdentical(cp, sorter.values) {
-		t.Error("Bubblesort arrays are not identical")
-	}
-	visual.Clear()
-}
-
-func isIdentical(first []int, second []int) bool {
-	for i := 0; i < len(first); i++ {
-		if first[i] != second[i] {
-			return false
+	for k, v := range sorter.values {
+		if k > 0 && v < sorter.values[k-1] {
+			t.Error("Quicksort array is not sorted")
 		}
 	}
-	return true
+	visual.Clear()
 }

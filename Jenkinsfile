@@ -15,16 +15,7 @@ pipeline {
             }
             steps {
                 sh 'cd sortingalgorithms'
-                sh 'echo go test -v'
-            }
-        }
-        stage('Lint') {
-            agent {
-                docker { image 'obraun/vss-jenkins' }
-            }   
-            steps {
-                sh 'echo no lint'
-                //sh 'golangci-lint run --enable-all'
+                sh 'go test -v'
             }
         }
         stage('Build Docker Image') {
@@ -33,7 +24,6 @@ pipeline {
             }
             steps {
                 sh "docker-build-and-push -b ${BRANCH_NAME} -s sortvisualization -f sortvisualization.dockerfile"
-                sh "docker-build-and-push -b ${BRANCH_NAME}"
             }
         }
     }
